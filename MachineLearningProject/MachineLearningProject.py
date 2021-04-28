@@ -186,8 +186,23 @@ data = [];
 
 def addModelToData(givenModel,title):
     cm = givenModel.model(printModelParameters=True,printModelProgress=True)
-    dryDayAccuracy = math.floor(cm[0][0]/(cm[0][0]+cm[0][1])*1000)/10;
-    rainyDayAccuracy = math.floor(cm[1][1]/(cm[1][1]+cm[1][0])*1000)/10;
+    print(cm);
+    
+    correctDryDayPredictions = cm[0][0];
+    correctRainyDayPredictions = cm[1][1];
+    totalDryDayPredictions = cm[0][0]+cm[1][0];
+    totalRainyDayPredictions = cm[1][1]+cm[0][1];
+
+    if totalDryDayPredictions == 0:
+        dryDayAccuracy = 0;
+    else:
+        dryDayAccuracy = math.floor((correctDryDayPredictions/totalDryDayPredictions)*1000)/10;
+    
+    if totalRainyDayPredictions == 0:
+        rainyDayAccuracy = 0;
+    else:
+        rainyDayAccuracy = math.floor((correctRainyDayPredictions/totalRainyDayPredictions)*1000)/10;
+
     generalAccuracy = math.floor(((cm[0][0]+cm[1][1])/(cm[0][0]+cm[0][1]+cm[1][1]+cm[1][0]))*1000)/10;
     data.append((
         title,
@@ -231,9 +246,9 @@ for dataPoint in data:
 fig,ax = plt.subplots();
 x = np.arange(len(data));
 width = 0.25;
-dryDayBar = ax.bar(x-width, list(dp[1] for dp in data), width, label="Dry Day Accuracy");
-rainyDayBar = ax.bar(x, list(dp[2] for dp in data), width, label="Rainy Day Accuracy");
-generalDayBar = ax.bar(x+width, list(dp[3] for dp in data), width, label="General Accuracy");
+dryDayBar = ax.bar(x-width, list(dp[1] for dp in data), width, label="Dry Day Prediction Accuracy");
+rainyDayBar = ax.bar(x, list(dp[2] for dp in data), width, label="Rainy Day Prediction Accuracy");
+generalDayBar = ax.bar(x+width, list(dp[3] for dp in data), width, label="General Prediction Accuracy");
 
 ax.bar_label(dryDayBar, padding=3);
 ax.bar_label(rainyDayBar, padding=3);
